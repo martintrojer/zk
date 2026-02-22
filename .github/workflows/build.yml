@@ -43,15 +43,31 @@ jobs:
             -w /usr/src/zk \
             -u root \
             ghcr.io/zk-org/zk-xcompile:${{ matrix.tag }} \
-            /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+            /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        run: |
+          docker run --rm \
+            -v $(pwd):/usr/src/zk \
+            -w /usr/src/zk \
+            -u root \
+            ghcr.io/zk-org/zk-xcompile:${{ matrix.tag }} \
+            /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvz zk > zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvz zk-vec > zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
 
   build-linux-arm:
     runs-on: ubuntu-24.04-arm
@@ -78,15 +94,31 @@ jobs:
             -w /usr/src/zk \
             -u root \
             ghcr.io/zk-org/zk-xcompile:linux-arm64 \
-            /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+            /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        run: |
+          docker run --rm \
+            -v $(pwd):/usr/src/zk \
+            -w /usr/src/zk \
+            -u root \
+            ghcr.io/zk-org/zk-xcompile:linux-arm64 \
+            /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvz zk > zk-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvz zk-vec > zk-vec-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-linux-arm64.tar.gz
 
   build-alpine-intel:
     runs-on: ubuntu-latest
@@ -116,15 +148,31 @@ jobs:
             -w /usr/src/zk \
             -u root \
             ghcr.io/zk-org/zk-xcompile:${{ matrix.tag }} \
-            /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+            /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        run: |
+          docker run --rm \
+            -v $(pwd):/usr/src/zk \
+            -w /usr/src/zk \
+            -u root \
+            ghcr.io/zk-org/zk-xcompile:${{ matrix.tag }} \
+            /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvz zk > zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvz zk-vec > zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-${{ matrix.tag }}.tar.gz
 
   build-alpine-arm:
     runs-on: ubuntu-24.04-arm
@@ -151,15 +199,31 @@ jobs:
             -w /usr/src/zk \
             -u root \
             ghcr.io/zk-org/zk-xcompile:alpine-arm64 \
-            /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+            /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        run: |
+          docker run --rm \
+            -v $(pwd):/usr/src/zk \
+            -w /usr/src/zk \
+            -u root \
+            ghcr.io/zk-org/zk-xcompile:alpine-arm64 \
+            /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-extldflags=-static -X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvz zk > zk-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvz zk-vec > zk-vec-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-alpine-arm64.tar.gz
 
   build-mac-intel:
     runs-on: macos-15-intel # NOTE: This is the last planned mac intel runner to be supported. See https://github.com/actions/runner-images/issues/13046
@@ -176,15 +240,25 @@ jobs:
         with:
           go-version: 1.23
       - name: Build
-        run: /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+        run: /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        run: /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvzf zk-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz zk
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvzf zk-vec-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz zk-vec
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-macos-x86_64.tar.gz
 
   build-mac-arm:
     runs-on: macos-latest
@@ -205,15 +279,27 @@ jobs:
       - name: Build
         env:
           GOARCH: arm64
-        run: /bin/bash -c 'go build -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+        run: /bin/bash -c 'go build -o zk -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
+      - name: Build vec
+        env:
+          GOARCH: arm64
+        run: /bin/bash -c 'go build -o zk-vec -buildvcs=false -tags "fts5 vec" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"'
       - name: Compress for upload.
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvzf zk-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz zk
+      - name: Compress vec for upload.
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvzf zk-vec-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz zk-vec
       - name: upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz
+      - name: upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-macos-arm64.tar.gz
 
   build-win:
     runs-on: windows-latest
@@ -231,12 +317,22 @@ jobs:
         with:
           go-version: 1.23
       - name: Build
-        run: go build -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"
+        run: go build -o zk.exe -buildvcs=false -tags "fts5" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"
+      - name: Build vec
+        run: go build -o zk-vec.exe -buildvcs=false -tags "fts5 vec" -ldflags "-X=main.Version=${{ steps.vars.outputs.version }} -X=main.Build=${{ steps.vars.outputs.version }}"
       - name: Compress for upload
         if: startsWith(steps.vars.outputs.version, 'v')
         run: tar -cvzf zk-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz zk.exe
+      - name: Compress vec for upload
+        if: startsWith(steps.vars.outputs.version, 'v')
+        run: tar -cvzf zk-vec-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz zk-vec.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
           name: zk-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz
           path: zk-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz
+      - name: Upload vec artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: zk-vec-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz
+          path: zk-vec-${{ steps.vars.outputs.version }}-windows-x86_64.tar.gz
